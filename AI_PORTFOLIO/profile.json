@@ -1,0 +1,28 @@
+{
+    "name": "Anish Singh",
+    "education": "B.Tech in Computer Science",
+    "skills": [
+        "Python",
+        "Data Structures",
+        "Algorithms",
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Java",
+        "C",
+        "React"
+    ],
+    "projects": [
+        {
+            "title": "Interactive AI Portfolio",
+            "description": "An AI agent built with Python."
+        }
+    ],
+    "experience": [],
+    "achievements": [],
+    "certifications": [],
+    "social_links": {
+        "github": "https://github.com/anishsingh-collab",
+        "linkedin": "https://www.linkedin.com/in/anish-singh-676976347/"
+    }
+}
