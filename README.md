@@ -7,17 +7,9 @@
 [![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-An interactive AI-powered representative portfolio application. This project features an AI persona grounded on professional profile data (`profile.json`) powered by **FastAPI**, **Groq (LLaMA 3.3 70B)**, and **React + Vite**. It answers questions about candidate skills and evaluates candidate suitability directly against pasted Job Descriptions in real-time streaming responses.
+An interactive AI-powered representative portfolio application. This project features an AI persona grounded on candidate profile data (`profile.json`) powered by **FastAPI**, **Groq (LLaMA 3.3 70B)**, and **React + Vite**. It answers recruiter queries and evaluates candidate suitability directly against pasted Job Descriptions in real-time streaming responses.
 
-![AI Portfolio Preview](./preview.png)
-
----
-
-## 🚀 Live Demo & Links
-
-- 🌐 **Live Website (Frontend):** [Deploy on Vercel](https://vercel.com) *(Update with your Vercel URL)*
-- ⚡ **Live API (Backend):** [Deployed on Render](https://render.com) *(Update with your Render URL)*
-- 📦 **GitHub Repository:** [ai-portfolio-backend](https://github.com/anishsingh-collab/ai-portfolio-backend)
+![AI Portfolio UI Screenshot](./preview.png)
 
 ---
 
@@ -36,12 +28,12 @@ An interactive AI-powered representative portfolio application. This project fea
 - **Framework:** FastAPI (Python)
 - **AI Inference Engine:** Groq API (`llama-3.3-70b-versatile`)
 - **Server:** Uvicorn ASGI
-- **Deployment:** Render (Free Web Service)
+- **Hosting:** Render
 
 ### Frontend
 - **Framework:** React 19 + Vite
 - **Styling:** Custom Modern CSS
-- **Deployment:** Vercel
+- **Hosting:** Vercel
 
 ---
 
@@ -58,7 +50,7 @@ ai_portfolio/
 │   ├── src/                 # React UI components & App styling
 │   ├── package.json         # Node dependencies
 │   └── vite.config.js       # Vite configuration
-├── preview.png              # README Screenshot preview
+├── preview.png              # UI Screenshot preview
 ├── requirements.txt         # Root fallback requirements
 └── .gitignore               # Excludes secrets & node_modules
 ```
@@ -90,7 +82,7 @@ echo "GROQ_API_KEY=your_groq_api_key_here" > .env
 # Run FastAPI backend
 uvicorn backend:app --reload --port 8000
 ```
-*Backend runs on `http://127.0.0.1:8000`*
+*Backend runs locally on `http://127.0.0.1:8000`*
 
 ### 3. Frontend Setup
 ```bash
@@ -102,7 +94,7 @@ npm install
 # Start Vite dev server
 npm run dev
 ```
-*Frontend runs on `http://localhost:5173`*
+*Frontend runs locally on `http://localhost:5173`*
 
 ---
 
