@@ -96,25 +96,3 @@ async def chat_endpoint(request: ChatRequest):
         media_type="text/plain"
     )
 
-#streaming karenge ab
-def generate_response(chat_messages: list[Message],job_description: str | None = None):
-    # Start with the system prompt
-    formatted_messages = [{"role": "system", "content": system_prompt}]
-    
-    for msg in chat_messages:
-        # Map frontend "ai" role to Groq's expected "assistant" role
-        groq_role = "assistant" if msg.role == "ai" else msg.role
-        formatted_messages.append({"role": groq_role, "content": msg.content})
-
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=formatted_messages,
-        stream=True
-    )
-    for chunk in response:
-        if chunk.choices[0].delta.content is not None:
-            yield chunk.choices[0].delta.content
-
-@app.post("/chat")
-async def chat_endpoint(request: ChatRequest):
-    return StreamingResponse(generate_response(request.messages), media_type="text/plain")
