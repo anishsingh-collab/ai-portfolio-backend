@@ -13,6 +13,13 @@ An interactive AI-powered representative portfolio application. This project fea
 
 ---
 
+## 🚀 Live Demo
+
+- 🌐 **Live Web Application:** [https://ai-portfolio-backend-psi.vercel.app](https://ai-portfolio-backend-psi.vercel.app)
+- 📦 **GitHub Repository:** [https://github.com/anishsingh-collab/ai-portfolio-backend](https://github.com/anishsingh-collab/ai-portfolio-backend)
+
+---
+
 ## ✨ Features
 
 - 💬 **Real-time AI Response Streaming:** Fast, low-latency response generation using Groq's `llama-3.3-70b-versatile` model.
