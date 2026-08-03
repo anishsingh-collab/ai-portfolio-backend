@@ -15,7 +15,8 @@ An interactive AI-powered representative portfolio application. This project fea
 
 ## 🚀 Live Demo
 
-- 🌐 **Live Web Application:** [https://ai-portfolio-backend-psi.vercel.app](https://ai-portfolio-backend-psi.vercel.app)
+- 🌐 **Live Web Application (Vercel):** [https://ai-portfolio-backend-psi.vercel.app](https://ai-portfolio-backend-psi.vercel.app)
+- ⚡ **Live API (Render):** [https://ai-portfolio-backend-8obz.onrender.com](https://ai-portfolio-backend-8obz.onrender.com)
 - 📦 **GitHub Repository:** [https://github.com/anishsingh-collab/ai-portfolio-backend](https://github.com/anishsingh-collab/ai-portfolio-backend)
 
 ---
