@@ -14,8 +14,10 @@ load_dotenv()
 my_api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=my_api_key)
 
-# Open and read your JSON profile
-with open("profile.json", "r") as file:
+# Open and read your JSON profile relative to script directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+profile_path = os.path.join(BASE_DIR, "profile.json")
+with open(profile_path, "r") as file:
     my_data = json.load(file)
 
 #Ai ko structured format me data diya
