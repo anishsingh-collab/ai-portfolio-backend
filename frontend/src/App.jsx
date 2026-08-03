@@ -46,18 +46,23 @@ function App() {
     setIsTyping(true);
 
     try {
-      const backendUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+      let rawUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+      if (!rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) {
+        rawUrl = `https://${rawUrl}`;
+      }
+      const backendUrl = rawUrl.replace(/\/$/, '');
+
       const response = await fetch(`${backendUrl}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          messages: updatedMessages,
+          messages: updatedMessages.filter(m => m.content && m.content.trim()),
           job_description: jobDescription
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`Server returned status ${response.status}`);
+        throw new Error(`Server status ${response.status}`);
       }
 
       const reader = response.body.getReader();
@@ -87,8 +92,8 @@ function App() {
       setMessages((prev) => {
         const newMessages = [...prev];
         const lastIndex = newMessages.length - 1;
-        if (lastIndex >= 0 && newMessages[lastIndex].role === 'ai' && !newMessages[lastIndex].content) {
-          newMessages[lastIndex].content = "⚠️ Unable to connect to AI server. Please verify your connection or backend status.";
+        if (lastIndex >= 0 && newMessages[lastIndex].role === 'ai') {
+          newMessages[lastIndex].content = "⚠️ Connection error or server waking up (Render free tier can take ~30s on cold start). Please try sending your message again!";
         }
         return newMessages;
       });

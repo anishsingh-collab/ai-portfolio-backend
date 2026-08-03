@@ -79,6 +79,8 @@ Evaluate the candidate (Anish Singh) specifically against this job description. 
     formatted_messages = [{"role": "system", "content": current_system_prompt}]
     
     for msg in chat_messages:
+        if not msg.content or not msg.content.strip():
+            continue
         groq_role = "assistant" if msg.role == "ai" else msg.role
         formatted_messages.append({"role": groq_role, "content": msg.content})
 
@@ -93,8 +95,15 @@ Evaluate the candidate (Anish Singh) specifically against this job description. 
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
+    headers = {
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no"
+    }
     return StreamingResponse(
         generate_response(request.messages, request.job_description), 
-        media_type="text/plain"
+        media_type="text/plain",
+        headers=headers
     )
+
 
