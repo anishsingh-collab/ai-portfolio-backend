@@ -9,7 +9,11 @@
 
 An interactive AI-powered representative portfolio application. This project features an AI persona grounded on candidate profile data (`profile.json`) powered by **FastAPI**, **Groq (LLaMA 3.3 70B)**, and **React + Vite**. It answers recruiter queries and evaluates candidate suitability directly against pasted Job Descriptions in real-time streaming responses.
 
-![AI Portfolio UI Screenshot](./preview.png)
+### 🌟 Cinematic Architecture
+![Hero Section](./hero.png)
+
+### 💬 Interactive AI Agent
+![Chat Interface](./chat.png)
 
 ---
 
