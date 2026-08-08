@@ -1,227 +1,67 @@
-import { useState, useRef, useEffect } from 'react';
-import './App.css';
+import { useEffect } from 'react';
+import gsap from 'gsap';
+import Lenis from '@studio-freight/lenis';
 
-function App() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [jobDescription, setJobDescription] = useState('');
-  const [showJDInput, setShowJDInput] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [copiedIndex, setCopiedIndex] = useState(null);
+import CustomCursor from './components/CustomCursor';
+import Hero from './components/Hero';
+import AiChatInterface from './components/AiChatInterface';
+import ProjectShowcase from './components/ProjectShowcase';
+import Philosophy from './components/Philosophy';
+import FinalCta from './components/FinalCta';
 
-  const messagesEndRef = useRef(null);
-
+export default function App() {
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
+    // Page load sequence
+    gsap.set(document.body, { opacity: 0 });
+    gsap.to(document.body, { opacity: 1, duration: 1, ease: 'power2.inOut' });
 
-  const handleCopy = (text, index) => {
-    if (!text) return;
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
+    // Lenis smooth scroll setup
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    });
 
-  const clearChat = () => {
-    if (window.confirm("Clear all chat messages?")) {
-      setMessages([]);
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
     }
-  };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
+    requestAnimationFrame(raf);
 
-  const sendMessage = async () => {
-    if (!input.trim() || isTyping) return;
+    // Sync Lenis with GSAP ScrollTrigger
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
 
-    const userMessage = { role: 'user', content: input };
-    const updatedMessages = [...messages, userMessage];
-    
-    setMessages([...updatedMessages, { role: 'ai', content: '' }]);
-    setInput('');
-    setIsTyping(true);
-
-    try {
-      let rawUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-      if (!rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) {
-        rawUrl = `https://${rawUrl}`;
-      }
-      const backendUrl = rawUrl.replace(/\/$/, '');
-
-      const response = await fetch(`${backendUrl}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          messages: updatedMessages.filter(m => m.content && m.content.trim()),
-          job_description: jobDescription
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server status ${response.status}`);
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        
-        const chunk = decoder.decode(value, { stream: true });
-        
-        setMessages((prev) => {
-          const newMessages = [...prev];
-          const lastIndex = newMessages.length - 1;
-          
-          const updatedMessage = {
-            ...newMessages[lastIndex],
-            content: newMessages[lastIndex].content + chunk
-          };
-          
-          newMessages[lastIndex] = updatedMessage;
-          return newMessages;
-        });
-      }
-    } catch (error) {
-      console.error("Connection Error:", error);
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        const lastIndex = newMessages.length - 1;
-        if (lastIndex >= 0 && newMessages[lastIndex].role === 'ai') {
-          newMessages[lastIndex].content = "⚠️ Connection error or server waking up (Render free tier can take ~30s on cold start). Please try sending your message again!";
-        }
-        return newMessages;
-      });
-    } finally {
-      setIsTyping(false);
-    }
-  };
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(lenis.raf);
+    };
+  }, []);
 
   return (
-    <div className="chat-layout">
-      <header className="header">
-        <div className="header-title">
-          <span className="logo-sparkle">✨</span>
-          <h1>AI Representative & Job Matcher</h1>
-        </div>
-        <div className="header-actions">
-          {messages.length > 0 && (
-            <button 
-              className="action-btn clear-btn" 
-              onClick={clearChat}
-              title="Clear chat history"
-            >
-              Clear 🗑️
-            </button>
-          )}
-          <button 
-            className="action-btn jd-toggle-btn" 
-            onClick={() => setShowJDInput(!showJDInput)}
-          >
-            {showJDInput ? 'Hide JD' : 'Paste Job Description 📋'}
-          </button>
-        </div>
-      </header>
-
-      {showJDInput && (
-        <div className="jd-container">
-          <textarea
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            placeholder="Paste Job Description here (e.g. Looking for a Python Developer with React experience...)"
-            rows={3}
-          />
-        </div>
-      )}
+    <>
+      <CustomCursor />
       
-      <main className="chat-history">
-        {messages.length === 0 && (
-          <div className="welcome-screen">
-            <div className="welcome-badge">Grounded AI Agent</div>
-            <h2>Hello. I'm Anish's AI.</h2>
-            <p>Paste a job description above to evaluate candidate fit, or ask me about his skills and projects.</p>
-            <div className="sample-prompts">
-              <button onClick={() => setInput("What are Anish's top technical skills?")}>
-                💡 Top technical skills?
-              </button>
-              <button onClick={() => setInput("Tell me about Anish's key projects.")}>
-                🚀 Key projects?
-              </button>
-            </div>
-          </div>
-        )}
-
-        {messages.map((msg, index) => (
-          <div key={index} className={`message-wrapper ${msg.role}`}>
-            {msg.role === 'ai' && (
-              <div className="ai-avatar">AI</div>
-            )}
-            <div className={`message-bubble ${msg.role}`}>
-              {msg.content === '' && msg.role === 'ai' ? (
-                <div className="typing-indicator" aria-label="AI is thinking">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              ) : (
-                <>
-                  <div className="message-text">{msg.content}</div>
-                  {msg.role === 'ai' && msg.content && (
-                    <div className="message-actions">
-                      <button 
-                        className="copy-btn" 
-                        onClick={() => handleCopy(msg.content, index)}
-                        title="Copy response"
-                      >
-                        {copiedIndex === index ? 'Copied! ✓' : '📋 Copy'}
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} /> 
+      <main className="w-full relative selection:bg-accent selection:text-white">
+        <Hero />
+        <AiChatInterface />
+        <ProjectShowcase />
+        <Philosophy />
+        <FinalCta />
       </main>
-
-      <div className="input-container">
-        <div className="input-box">
-          <input 
-            type="text" 
-            value={input} 
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={jobDescription ? "Ask: Is this candidate suitable for the JD?" : "Message the AI..."}
-            disabled={isTyping}
-          />
-          <button 
-            onClick={sendMessage} 
-            disabled={!input.trim() || isTyping}
-            className="send-button"
-            aria-label="Send message"
-          >
-            {isTyping ? (
-              <div className="spinner"></div>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            )}
-          </button>
-        </div>
-        <div className="footer-text">
-          AI generated response • Press Enter to send
-        </div>
-      </div>
-    </div>
+      
+      <footer className="w-full py-6 text-center text-secondary text-sm bg-dark">
+        <p>© {new Date().getFullYear()} Anish Singh. System Operational.</p>
+      </footer>
+    </>
   );
 }
-
-export default App;
